@@ -1,0 +1,9 @@
+{
+  "cmake.ignoreCMakeListsMissing": true,
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "quickfix.insertSemicolon": "always"
+    }
+  }
+}
