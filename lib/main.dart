@@ -33,20 +33,12 @@ class _TodoListPageState extends State<TodoListPage> {
           return Card(child: ListTile(title: Text(todoList[index])));
         },
       ),
-      // body: ListView(
-      // children: <Widget>[
-      // Card(child: ListTile(title: Text('にんじんを買う'))),
-      // Card(child: ListTile(title: Text('玉ねぎを買う'))),
-      // Card(child: ListTile(title: Text('じゃがいもを買う'))),
-      // Card(child: ListTile(title: Text('カレールーを買う'))),
-      // ],
-      // ),
       appBar: AppBar(title: Text('リスト一覧')),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // pushで新しい画面に遷移
           // リスト追加画面から渡される値を受け取る
-          final newListText = await Navigator.of(context).push(
+          final newListText = await Navigator.of(context).push<String>(
             MaterialPageRoute(
               builder: (context) {
                 return TodoAddPage();
@@ -89,9 +81,9 @@ class _TodoAddPageState extends State<TodoAddPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('リスト追加')),
+      appBar: AppBar(title: const Text('リスト追加')),
       body: Container(
-        padding: EdgeInsets.all(64),
+        padding: const EdgeInsets.all(64),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -112,8 +104,22 @@ class _TodoAddPageState extends State<TodoAddPage> {
               // リストボタンを追加
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                onPressed: () => {},
-                child: Text('リストを追加', style: TextStyle(color: Colors.white)),
+                onPressed:
+                    () => {
+                      AlertDialog(
+                        content: const Text('追加しました！'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    },
+                child: const Text(
+                  'リストを追加',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -123,7 +129,7 @@ class _TodoAddPageState extends State<TodoAddPage> {
               // キャンセルボタンを追加
               child: TextButton(
                 onPressed: () => {Navigator.of(context).pop(_text)},
-                child: Text("キャンセル"),
+                child: const Text('キャンセル'),
               ),
             ),
           ],
