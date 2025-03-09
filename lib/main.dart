@@ -15,31 +15,62 @@ class MyTodoApp extends StatelessWidget {
   }
 }
 
-class TodoListPage extends StatelessWidget {
+class TodoListPage extends StatefulWidget {
+  @override
+  _TodoListPageState createState() => _TodoListPageState();
+}
+
+class _TodoListPageState extends State<TodoListPage> {
+  // Todoリストのデータ
+  List<String> todoList = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Card(child: ListTile(title: Text('にんじんを買う'))),
-          Card(child: ListTile(title: Text('玉ねぎを買う'))),
-          Card(child: ListTile(title: Text('じゃがいもを買う'))),
-          Card(child: ListTile(title: Text('カレールーを買う'))),
-        ],
+      body: ListView.builder(
+        itemCount: todoList.length,
+        itemBuilder: (context, index) {
+          return Card(child: ListTile(title: Text(todoList[index])));
+        },
       ),
+      // body: ListView(
+      // children: <Widget>[
+      // Card(child: ListTile(title: Text('にんじんを買う'))),
+      // Card(child: ListTile(title: Text('玉ねぎを買う'))),
+      // Card(child: ListTile(title: Text('じゃがいもを買う'))),
+      // Card(child: ListTile(title: Text('カレールーを買う'))),
+      // ],
+      // ),
       appBar: AppBar(title: Text('リスト一覧')),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => {
-              // pushで新しい画面に遷移
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return TodoAddPage();
-                  },
+        onPressed: () async {
+          // pushで新しい画面に遷移
+          // リスト追加画面から渡される値を受け取る
+          final newListText = await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return TodoAddPage();
+              },
+            ),
+          );
+          if (newListText != null) {
+            setState(() {
+              // リストを追加
+              todoList.add(newListText);
+            });
+          } else {
+            AlertDialog(
+              title: Text('エラー'),
+              content: Text('リストが存在しませんでした。'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
                 ),
-              ),
-            },
+              ],
+            );
+          }
+        },
         child: Icon(Icons.add),
       ),
     );
@@ -52,6 +83,9 @@ class TodoAddPage extends StatefulWidget {
 }
 
 class _TodoAddPageState extends State<TodoAddPage> {
+  // 入力されたテキストをデータとして持つ
+  String _text = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +96,15 @@ class _TodoAddPageState extends State<TodoAddPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             //  テキスト入力
-            TextField(),
+            TextField(
+              onChanged:
+                  (String value) => {
+                    setState(() {
+                      // データを変更
+                      _text = value;
+                    }),
+                  },
+            ),
             const SizedBox(height: 8),
             Container(
               // 横幅いっぱいに広げる
@@ -80,7 +122,7 @@ class _TodoAddPageState extends State<TodoAddPage> {
               width: double.infinity,
               // キャンセルボタンを追加
               child: TextButton(
-                onPressed: () => {Navigator.of(context).pop()},
+                onPressed: () => {Navigator.of(context).pop(_text)},
                 child: Text("キャンセル"),
               ),
             ),
